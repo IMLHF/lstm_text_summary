@@ -63,7 +63,7 @@ def get_idx(vocab, vocabcount):
 word2idx, idx2word = get_idx(vocab, vocabcount)
 # endregion
 
-# region Word Embedding (glove_index_dict and glove_embedding_weight)
+# region read glove Word Embedding (glove_index_dict and glove_embedding_weight)
 '''
 glove_index_dict[word]=index
 glove_embedding_weight[index][:] = word_embedding_vec
@@ -131,6 +131,52 @@ for i in range(vocab_size):
     pass
     # print(word)
 print('%d (all %d) tokens found in glove and copied to embedding.' % (c, vocab_size))
+# endregin
+
+# region map word out of embedding_matrix to similar word or <unknown>
+glove_thr = 0.5
+word2glove = {}
+for w in word2idx:
+    if w in glove_index_dict:
+        g = w
+    elif w.lower() in glove_index_dict:
+        g = w.lower()
+    elif w.startswith('#') and w[1:] in glove_index_dict:
+        g = w[1:]
+    elif w.startswith('#') and w[1:].lower() in glove_index_dict:
+        g = w[1:].lower()
+    else:
+        continue
+    word2glove[w] = g
+
+normed_embedding = embedding/np.array([np.sqrt(np.dot(gweight,gweight)) for gweight in embedding])[:,None]
+
+nb_unknown_words = 100
+
+glove_match = []
+for w,idx in word2idx.items():
+    if idx >= vocab_size-nb_unknown_words and w.isalpha() and w in word2glove:
+        gidx = glove_index_dict[word2glove[w]]
+        gweight = glove_embedding_weights[gidx,:].copy()
+        # find row in embedding that has the highest cos score with gweight
+        gweight /= np.sqrt(np.dot(gweight,gweight))
+        score = np.dot(normed_embedding[:vocab_size-nb_unknown_words], gweight)
+        while True:
+            embedding_idx = score.argmax()
+            s = score[embedding_idx]
+            if s < glove_thr:
+                break
+            if idx2word[embedding_idx] in word2glove:
+                glove_match.append((w, embedding_idx, s))
+                break
+            score[embedding_idx] = -1
+glove_match.sort(key=lambda x: -x[2])
+print('# of glove substitutes found', len(glove_match))
+for orig, sub, score in glove_match[-10:]:
+    print(score, orig,'=>', idx2word[sub])
+glove_idx2idx = dict((word2idx[w], embedding_idx)
+                     for w, embedding_idx, _ in glove_match)
+# endregion
 
 
 
@@ -145,7 +191,7 @@ Y = [[word2idx[token] for token in headline.split()] for headline in heads]
 # plt.show()
 
 with open('data/%s.pkl' % "vocabulary-embedding",'wb') as fp:
-    pickle.dump((embedding, idx2word, word2idx),fp,-1)
+    pickle.dump((embedding, idx2word, word2idx, glove_idx2idx),fp,-1)
 
 with open('data/embedded_data.pkl','wb') as fp:
     pickle.dump((X,Y),fp,-1)
