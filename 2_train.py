@@ -19,7 +19,7 @@ from keras.optimizers import Adam, RMSprop
 import Levenshtein
 import keras.backend.tensorflow_backend as KTF
 import tensorflow as tf
-os.environ["CUDA_VISIBLE_DEVICES"] = "3"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 config = tf.ConfigProto()
 config.gpu_options.allow_growth=True   #不全部占满显存, 按需分配
 sess = tf.Session(config=config)
@@ -365,7 +365,7 @@ def gensamples(skips=2, k=10, batch_size=batch_size, short=True, temperature=1.,
           print(score, ' '.join(words))
         codes.append(code)
 
-print(gensamples(skips=2, batch_size=batch_size, k=10, temperature=1.))
+# print(gensamples(skips=2, batch_size=batch_size, k=10, temperature=1.))
 def flip_headline(x, nflips=None, model=None, debug=False):
     """given a vectorized input (after `pad_sequences`) flip some of the words in the second half (headline)
     with words predicted by the model

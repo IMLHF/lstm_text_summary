@@ -1,0 +1,39 @@
+Using TensorFlow backend.
+2019-06-02 14:04:40.024778: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+dimension of embedding space for words 100
+vocabulary size 40000 the last 10 words can be used as place holders for unknown/oov words
+total number of different words 148703 148703
+number of words outside vocabulary which we can substitue using glove similarity 53831
+number of words that will be regarded as unknonw(unk)/out-of-vocabulary(oov) 54872
+3_predict.py:195: UserWarning: Update your `Dense` call to the Keras 2 API: `Dense(40000, bias_regularizer=None, kernel_regularizer=None, name="timedistributed_1")`
+  name='timedistributed_1')))
+Loading data/model_009.hdf5 to sequential_1
+embedding_1
+lstm_1
+dropout_1
+lstm_2
+dropout_2
+lstm_3
+dropout_3
+simplecontext_1
+time_distributed_1
+activation_1
+944
+sequential_2
+0 cls=Sequential name=sequential_1
+40000x100 100x2048 512x2048 2048 512x2048 512x2048 2048 512x2048 512x2048 2048 944x40000 40000
+(2026,)
+[[3146, 39997, 5423, 5799, 7257, 9190, 658, 8480, 8608, 19598, 301, 3521, 8077, 19269, 105, 12, 269, 22444, 93, 1494, 46, 3, 132, 366, 658, 1730, 2, 1142, 56, 3732, 20136, 2869, 11129, 304, 39997, 186, 1332, 186, 39997, 39997, 88, 39997, 39997, 8608, 35, 5925, 10, 39997, 39997, 1]]
+False
+(1, 50) [50]
+probs[0].shape (25, 40000)
+[1.2258238e-07 8.0536313e-02 1.5795644e-02 ... 9.8846084e-04 3.3635718e-03
+ 1.8065713e-02]
+Input text:
+VETERANS^ saluted^ Worcester ' s first ever breakfast club for ex - soldiers which won over hearts , minds and bellies^ . The Worcester Breakfast Club for HM Forces Veterans met at the Postal Order in Foregate^ Street at 10am on Saturday . The club is designed to allow veterans a place to meet , socialise^ , eat and drink , giving hunger and loneliness their marching orders . Father -
+of - two Dave Carney , aged 43 , of Merrimans^ Hill , Worcester , set up the club after being inspired by other similar clubs across the country . He said : " As you can see from the picture , we had a good response . Five out of the 10 that attended said they saw the article in the newspaper and turned up . " We even had an old chap travel from Droitwich^ and he was late on parade by
+three hours . " It ' s generated a lot of interest and I estimate ( from other veterans who saw the article ) that next month ' s meeting will attract about 20 people . Onwards^ and upwards . "
+He said the management at the pub had been extremely hospitable to them . Mr Carney said : " They bent over backwards for us . They really looked after us well . That is the best choice of venue I could have made . They even put ' reserved for the armed forces ' . Promoted stories The reserve veteran with the Royal Engineers wanted to go to a breakfast club but found the nearest ones were in Bromsgrove^ and Gloucester so he decided to set up his own , closer to home . He was influenced by Derek Hardman^ who set up a breakfast club for veterans in Hull and Andy Wilson who set
+one up in Newcastle . He said the idea has snowballed^ and there were now 70 similar clubs across the country and even some in Germany . Mr Carney said with many Royal British Legion clubs closing he wanted veterans and serving personnel to feel they had somewhere they could go for good grub^ , beer and banter to recapture the comradery^ of being in the forces . The Postal Order was chosen because of its central location and its proximity to the railway station and hotels and reasonably priced food and drink . The management of the pub have even given the veterans a designated area within the pub . Share article The next meeting is at the Postal Order on Saturday , October 3 at 10am . The breakfast club meets on the first Saturday of each month for those who want to attend in future .
+Pridict summary:
+Worcester breakfast club for veterans gives hunger its marching orders
