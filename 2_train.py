@@ -42,8 +42,9 @@ optimizer = 'adam'
 learning_rate = 1e-4
 batch_size=64
 nflips=10
-nb_train_samples = 200
+nb_train_samples = 100
 nb_val_samples = 20
+n_epoches = 10
 
 with open(vocabulary_embedding_dir, 'rb') as fp:
     embedding, idx2word, word2idx, glove_idx2idx = pickle.load(fp)
@@ -100,29 +101,29 @@ random.seed(seed)
 np.random.seed(seed)
 regularizer = l2(weight_decay) if weight_decay else None
 model = Sequential()
-model.add(Embedding(vocab_size, embedding_size,
-                    input_length=maxlen,
-                    W_regularizer=regularizer, dropout=0, weights=[
-                        embedding], mask_zero=True,
-                    name='embedding_1'))
 # model.add(Embedding(vocab_size, embedding_size,
 #                     input_length=maxlen,
-#                     embeddings_regularizer=regularizer,
-#                     weights=[embedding], mask_zero=True,
+#                     W_regularizer=regularizer, dropout=0, weights=[
+#                         embedding], mask_zero=True,
 #                     name='embedding_1'))
+model.add(Embedding(vocab_size, embedding_size,
+                    input_length=maxlen,
+                    embeddings_regularizer=regularizer,
+                    weights=[embedding], mask_zero=True,
+                    name='embedding_1'))
 for i in range(rnn_layers):
-    lstm = LSTM(rnn_size, return_sequences=True,  # batch_norm=batch_norm,
-                W_regularizer=regularizer, U_regularizer=regularizer,
-                b_regularizer=regularizer, dropout_W=p_W, dropout_U=p_U,
-                name='lstm_%d' % (i+1)
-                )
-    # lstm = LSTM(rnn_size, dropout=p_W, return_sequences=True,  # batch_norm=batch_norm,
-    #             name='lstm_%d' % (i+1),
-    #             recurrent_regularizer=regularizer,
-    #             kernel_regularizer=regularizer,
-    #             recurrent_dropout=p_U,
-    #             bias_regularizer=regularizer,
+    # lstm = LSTM(rnn_size, return_sequences=True,  # batch_norm=batch_norm,
+    #             W_regularizer=regularizer, U_regularizer=regularizer,
+    #             b_regularizer=regularizer, dropout_W=p_W, dropout_U=p_U,
+    #             name='lstm_%d' % (i+1)
     #             )
+    lstm = LSTM(rnn_size, dropout=p_W, return_sequences=True,  # batch_norm=batch_norm,
+                name='lstm_%d' % (i+1),
+                recurrent_regularizer=regularizer,
+                kernel_regularizer=regularizer,
+                recurrent_dropout=p_U,
+                bias_regularizer=regularizer,
+                )
     model.add(lstm)
     model.add(Dropout(p_dense,name='dropout_%d' % (i+1)))
 
@@ -455,7 +456,7 @@ valgen = gen(X_test, Y_test, nb_batches=nb_val_samples//batch_size, batch_size=b
 r = next(traingen)
 print(r[0].shape, r[1].shape, len(r))
 # print("233")
-for iteration in range(30):
+for iteration in range(n_epoches):
     print('Iteration', iteration)
     h = model.fit_generator(traingen, samples_per_epoch=nb_train_samples,
                             nb_epoch=1, validation_data=valgen, nb_val_samples=nb_val_samples
